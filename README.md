@@ -2,7 +2,7 @@
 
 ## List of figures:
  
-[preprocessing
+[Fig. 1](#markdown-header-fig-1)
 
 ### Fig. 1
 ![Fig1](figure/20150201_RV144pilot.Fig1.png)
