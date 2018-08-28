@@ -2,7 +2,7 @@
 
 ## List of figures:
  
-[Fig. 1](#markdown-header-fig-1), [Fig. 2](#markdown-header-fig-2)
+[Fig. 1](#fig-1), [Fig. 2](#fig-2)
 
 ## Fig. 1
 ![Fig. 1](figure/20150201_RV144pilot.Fig1.png)
