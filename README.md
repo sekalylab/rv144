@@ -6,7 +6,7 @@
 
 ### Fig. 2
 ![Fig. 2](figure/20150201_RV144pilot.Fig2.png)
-Fig. 1: [R code [MD]](code/20160510_RV144pilot.Fig2.code.md), [Input file [RData]](output/rv144pilot.gsSetVehSubstracted.RData) 
+Fig. 2: [R code [MD]](code/20160510_RV144pilot.Fig2.code.md), [Input file [RData]](output/rv144pilot.gsSetVehSubstracted.RData) 
 
 ### Fig. 3
 ![Fig. 3](figure/20150201_RV144pilot.Fig3.png)
@@ -40,3 +40,21 @@ output:
 - MArrayLM list: [[RDA]](output/rv144pilot.fits.RData)  
 - gsea result table: [[RDA]](output/rv144pilot.gseaOutput.RData)  
 - slea ExpressionSet: [[RDA]](output/rv144pilot.gsSetVehSubstracted.RData)  
+
+### b. transcriptomic case/control study:
+code:  
+- preprocessing: [[MD]](code/20151007_RV144.preprocessing.code.md)  
+- geneset-analysis:  
+
+input:  
+- non-normalized matrix: [[CSV]](input/GA_illumina_expression.rv144.matrix_non_norm.csv)  
+- arrays/samples annotation: [[CSV]](input/GA_illumina_expression.rv144.metadata.csv)  
+- features annotation: [[TSV]](input/Illumina_HumanHT12_V4.hg19.chip)  
+  
+output:  
+- non-normalized ExpressionSet: [[RDA]](output/rv144.esetRaw.RData)  
+- quantile normalized ExpressionSet: [[RDA]](output/rv144.eset.RData)  
+- DMSO-substracted ExpressionSet: [[RDA]](output/rv144.esetBaselined.RData)  
+- MArrayLM list: [[RDA]](output/rv144.fits.RData)  
+- gsea result table:  
+- slea ExpressionSet:  
