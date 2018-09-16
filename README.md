@@ -44,7 +44,7 @@ output:
 ### b. transcriptomic case/control study:
 code:  
 - preprocessing: [[MD]](code/20151007_RV144.preprocessing.code.md)  
-- geneset-analysis:  
+- geneset-analysis: [[MD]](code/20151007_RV144.geneset_analysis.code.md)  
 
 input:  
 - non-normalized matrix: [[CSV]](input/GA_illumina_expression.rv144.matrix_non_norm.csv)  
@@ -56,5 +56,5 @@ output:
 - quantile normalized ExpressionSet: [[RDA]](output/rv144.eset.RData)  
 - DMSO-substracted ExpressionSet: [[RDA]](output/rv144.esetBaselined.RData)  
 - MArrayLM list: [[RDA]](output/rv144.fits.RData)  
-- gsea result table:  
-- slea ExpressionSet:  
+- gsea result table: [[RDA]](output/rv144.gseaOutput.RData)  
+- slea ExpressionSet: [[RDA]](output/rv144.gsSet.RData)  
