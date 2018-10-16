@@ -10,7 +10,7 @@ Fig. 2: [R code [MD]](code/20160510_RV144pilot.Fig2.code.md), [Input file [RData
 
 ### Fig. 3
 ![Fig. 3](figure/20150201_RV144pilot.Fig3.png)
-Fig. 3: [R code] [MD]](code/20160216_RV144.Fig3.code.md), [Input file [RData]](output/rv144.gseaOutput.RData) 
+Fig. 3: [R code [MD]](code/20160216_RV144.Fig3.code.md), [Input file [RData]](output/rv144.gseaOutput.RData) 
 
 ### Fig. 4
 ![Fig. 4](figure/20150201_RV144pilot.Fig4.png)
@@ -45,13 +45,19 @@ output:
 ### b. transcriptomic case/control study:
 code:  
 - preprocessing: [[MD]](code/20151007_RV144.preprocessing.code.md)  
-- geneset-analysis: [[MD]](code/20151007_RV144.geneset_analysis.code.md)  
+- geneset analysis: [[MD]](code/20151007_RV144.geneset_analysis.code.md)  
+- integrative analysis: [[MD]](code/20151020_RV144.integrative_analysis.code.md)  
 
 input:  
 - non-normalized matrix: [[CSV]](input/GA_illumina_expression.rv144.matrix_non_norm.csv)  
 - arrays/samples annotation: [[CSV]](input/GA_illumina_expression.rv144.metadata.csv)  
 - features annotation: [[TSV]](input/Illumina_HumanHT12_V4.hg19.chip)  
-  
+- antibody and cellular data: [[CSV]](input/rv144.primary_correlates_scaled_wk26.csv)  
+- flow cytometry data: counts [[CSV]](input/rv144.phenotype_counts.csv), population annotation [[CSV]](input/rv144.phenotype_features_annotation.csv), sample annotation [[CSV]](input/rv144.phenotype_samples_annotation.csv)  
+- luminex data: [[CSV]](input/rv144.luminex.csv)  
+- ics data: [[CSV]](input/rv144.compass_ics_scaled.csv)  
+- haplotype data: [[CSV]](input/rv144.haplotype.csv)  
+
 output:  
 - non-normalized ExpressionSet: [[RDA]](output/rv144.esetRaw.RData)  
 - quantile normalized ExpressionSet: [[RDA]](output/rv144.eset.RData)  
@@ -59,3 +65,9 @@ output:
 - MArrayLM list: [[RDA]](output/rv144.fits.RData)  
 - gsea result table: [[RDA]](output/rv144.gseaOutput.RData)  
 - slea ExpressionSet: [[RDA]](output/rv144.gsSet.RData)  
+- antibody and cellular ExpressionSet: [[RDA]](output/rv144.primCorrelatesSet.RData)  
+- flow cytometry ExpressionSet: raw [[RDA]](output/rv144.phenotypeRawSet.RData), normalized (output/rv144.phenotypeSet.RData)  
+- luminex ExpressionSet: [[RDA]](output/rv144.luminexSet.RData)  
+- ics ExpressionSet: [[RDA]](output/rv144.icsSet.RData)  
+- haplotype ExpressionSet: [[RDA]](output/rv144.haplotypeSet.RData)  
+
