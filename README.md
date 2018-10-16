@@ -10,6 +10,7 @@ Fig. 2: [R code [MD]](code/20160510_RV144pilot.Fig2.code.md), [Input file [RData
 
 ### Fig. 3
 ![Fig. 3](figure/20150201_RV144pilot.Fig3.png)
+Fig. 3: [R code] [MD]](code/20160216_RV144.Fig3.code.md), [Input file [RData]](output/rv144.gseaOutput.RData) 
 
 ### Fig. 4
 ![Fig. 4](figure/20150201_RV144pilot.Fig4.png)
