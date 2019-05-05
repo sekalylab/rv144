@@ -14,7 +14,8 @@ Fig. 3: [R code [MD]](code/20160216_RV144.Fig3.code.md), [Input file [RData]](ou
 
 ### Fig. 4
 ![Fig. 4](figure/20150201_RV144pilot.Fig4.png)
-
+Fig. 4: [R code [MD]](code/20161216_RV144.Fig4.code.md)  
+  
 ### Fig. 5
 ![Fig. 5](figure/20150201_RV144pilot.Fig5.png)
 
