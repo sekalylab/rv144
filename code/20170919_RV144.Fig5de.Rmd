@@ -1,0 +1,316 @@
+---
+title: "EM131 Fig5de"
+author: "Slim FOURATI"
+date: "09/19/2017"
+output: github_document
+---
+
+```{r load-packages}
+suppressPackageStartupMessages(library(package = "knitr"))
+suppressPackageStartupMessages(library(package = "readxl"))
+suppressPackageStartupMessages(library(package = "ggplot2"))
+suppressPackageStartupMessages(library(package = "dplyr"))
+suppressPackageStartupMessages(library(package = "tidyr"))
+suppressPackageStartupMessages(library(package = "tibble"))
+```
+
+```{r set-default-options}
+knitr::opts_chunk$set(echo = TRUE) # do not echo chunks
+opts_chunk$set(tidy = FALSE, fig.path = "../figure/")
+options(dplyr.summarise.inform = FALSE)
+workDir <- dirname(getwd())
+```
+
+```{r read-exp1-sheet}
+exp1Freq <- read_excel(path  = file.path(workDir,
+                                         "input",
+                                         "20170907 Exp1 and 4 RV144 IFN Raw data to Slim_Final.xlsx"),
+                       sheet = 1,
+                       skip  = 6) %>%
+  select(-`...1`)
+exp1Freq <- exp1Freq[-seq(from = min(which(is.na(exp1Freq$donor))), to = nrow(exp1Freq)), ]
+exp1Freq <- exp1Freq %>%
+  gather(cname, value, -donor, -Unstim) %>%
+  mutate(value  = as.numeric(value),
+         Unstim = as.numeric(Unstim),
+         Fold   = value/Unstim,
+         Exp    = 1)
+print(range(exp1Freq$value))
+
+exp1MFI <- read_excel(path  = file.path(workDir, 
+                                        "input", 
+                                        "20170907 Exp1 and 4 RV144 IFN Raw data to Slim_Final.xlsx"),
+                       sheet = 1,
+                       skip  = 15) %>%
+  select(-`...1`) %>%
+  gather(cname, value, -donor, -Unstim) %>%
+  mutate(value  = as.numeric(value),
+         Unstim = as.numeric(Unstim),
+         Fold   = value/Unstim,
+         Exp    = 1)
+print(range(exp1MFI$value))
+```
+
+```{r read-exp4-sheet}
+exp4Freq <- read_excel(path  = file.path(workDir,
+                                         "input",
+                                         "20170907 Exp1 and 4 RV144 IFN Raw data to Slim_Final.xlsx"),
+                       sheet = 2,
+                       skip  = 6) %>%
+  select(-`...1`, -`...19`)
+exp4Freq <- exp4Freq[-seq(from = min(which(is.na(exp4Freq$donor))), to = nrow(exp4Freq)), ]
+exp4Freq <- exp4Freq %>%
+  gather(cname, value, -donor, -Unstim) %>%
+  mutate(value = gsub(pattern = "\\*", replacement = "\\1", value),
+         Unstim = gsub(pattern = "\\*", replacement = "\\1", Unstim),
+         value  = as.numeric(value),
+         value  = pmax(value, min(setdiff(value, 0))/2),
+         Unstim = as.numeric(Unstim),
+         Unstim = pmax(Unstim, min(setdiff(Unstim, 0))/2),
+         Fold   = value/Unstim,
+         Exp    = 4)
+print(range(exp4Freq$value))
+
+exp4MFI <- read_excel(path  = file.path(workDir,
+                                        "input",
+                                        "20170907 Exp1 and 4 RV144 IFN Raw data to Slim_Final.xlsx"),
+                      sheet = 2,
+                      skip  = 17) %>%
+  select(-`...1`) %>%
+  filter(!is.na(donor)) %>%
+  gather(cname, value, -donor, -Unstim) %>%
+  mutate(value = gsub(pattern = "\\*", replacement = "\\1", value),
+         Unstim = gsub(pattern = "\\*", replacement = "\\1", Unstim),
+         value  = as.numeric(value),
+         Unstim = as.numeric(Unstim),
+         Fold   = value/Unstim,
+         Exp    = 4)
+print(range(exp4MFI$Unstim, na.rm = TRUE))
+```
+
+```{r merge-exp}
+# merge exp1 and exp4 (p24 frequency table)
+expFreq <- rbind(exp1Freq, exp4Freq) %>%
+  mutate(CytokineName = gsub(pattern = "^([^ ]+) .+",
+                             replacement = "\\1",
+                             cname),
+         CytokineConc = gsub(pattern = ".+ ([^ ]+)$",
+                             replacement = "\\1",
+                             cname),
+         CytokineConc = gsub(pattern = "^0",
+                             replacement = "0.",
+                             CytokineConc))
+unstimFreq <- expFreq %>%
+  select(donor, Unstim, cname, Exp, CytokineName) %>%
+  distinct() %>%
+  mutate(value        = Unstim,
+         Fold         = value/Unstim,
+         CytokineConc = "Unstim",
+         cname        = paste0(CytokineName, " unstim")) %>%
+  select(names(expFreq))
+expFreq <- rbind(expFreq, unstimFreq) %>%
+  mutate(CytokineConc = factor(CytokineConc),
+         CytokineConc = relevel(CytokineConc, ref = "Unstim")) 
+expMFI <- rbind(exp1MFI, exp4MFI) %>%
+  mutate(CytokineName = gsub(pattern = "^([^ ]+) .+",
+                             replacement = "\\1",
+                             cname),
+         CytokineConc = gsub(pattern = ".+ ([^ ]+)$",
+                             replacement = "\\1",
+                             cname),
+         CytokineConc = gsub(pattern = "^0",
+                             replacement = "0.",
+                             CytokineConc))
+unstimMFI <- expMFI %>%
+  select(donor, Unstim, cname, Exp, CytokineName) %>%
+  distinct() %>%
+  mutate(value        = Unstim,
+         Fold         = value/Unstim,
+         CytokineConc = "Unstim",
+         cname        = paste0(CytokineName, " unstim")) %>%
+  select(names(expMFI))
+expMFI <- rbind(expMFI, unstimMFI) %>%
+  mutate(CytokineConc = factor(CytokineConc),
+         CytokineConc = relevel(CytokineConc, ref = "Unstim"))
+``` 
+
+```{r plot-jit-freq}
+# make jitter plot
+plotJit <- ggplot(data    = expFreq,
+                  mapping = aes(x = CytokineConc, y = log2(Fold))) +
+  geom_line(mapping = aes(group = donor)) +
+  geom_point(size = 1.5) +
+  stat_summary(fun.y = median,
+               geom = "line",
+               color = "red",
+               mapping = aes(group = 1),
+               lwd = 2) +
+  labs(x = "Concentration", y = "log2FC %CD4np24p") +
+  facet_wrap(facet = ~CytokineName, nrow = 1, scale = "free") +
+  geom_hline(yintercept = 0) +
+  theme_bw() +
+  theme(panel.grid = element_blank(),
+        legend.position = "none",
+        axis.text.x = element_text(color = "black", angle = 45, size = 10),
+        axis.text.y = element_text(color = "black", size = 10),
+        axis.title.y = element_text(color = "black", size = 10),
+        axis.title.x = element_blank())
+print(plotJit)
+
+# Wilcoxon-rank
+statDF <- expFreq %>%
+  filter(CytokineName != "Unstim") %>%
+  group_by(CytokineName, CytokineConc) %>%
+  do(p = wilcox.test(x = .$value, y = .$Unstim, paired = TRUE, correct = TRUE)$p.value) %>%
+  mutate(p = unlist(p))
+filter(statDF, p <= 0.1)
+``` 
+
+```{r plot-jit-mfi, include=FALSE}
+# make jitter plot
+plotJit <- ggplot(data    = filter(expMFI, !is.na(Fold)),
+                  mapping = aes(x = CytokineConc, y = log2(Fold))) +
+  geom_line(mapping = aes(group = donor)) +
+  geom_point(size = 1.5) +
+  stat_summary(fun.y = median,
+               geom = "line",
+               color = "red",
+               mapping = aes(group = 1),
+               lwd = 2) +
+  labs(x = "Concentration", y = "log2FC CD4np24p MFI") +
+  facet_wrap(facet = ~CytokineName, nrow = 1, scale = "free") +
+  geom_hline(yintercept = 0) +
+  theme_bw() +
+  theme(panel.grid = element_blank(),
+        legend.position = "none",
+        axis.text.x = element_text(color = "black", angle = 45, size = 10),
+        axis.text.y = element_text(color = "black", size = 10),
+        axis.title.y = element_text(color = "black", size = 10),
+        axis.title.x = element_blank())
+print(plotJit)
+
+# Wilcoxon-rank
+statDF <- expMFI %>%
+  filter(CytokineName != "Unstim") %>%
+  group_by(CytokineName, CytokineConc) %>%
+  do(p = wilcox.test(x = .$value, y = .$Unstim, paired = TRUE, correct = FALSE)$p.value) %>%
+  mutate(p = unlist(p))
+filter(statDF, p <= 0.1)
+``` 
+
+```{r read-phospho-}
+# read phosphoflow sheet
+expPF <- read_excel(path = file.path(workDir,
+                                     "input",
+                                     "20170907 Exp1 and 4 RV144 IFN Raw data to Slim_Final.xlsx"),
+                    sheet = 4,
+                    skip = 6)
+# fix column name
+for (i in 2:ncol(expPF)) {
+  if (grepl(pattern = "\\.\\.\\.", names(expPF)[i]))
+    names(expPF)[i] <- names(expPF)[(i - 1)]
+}
+names(expPF) <- interaction(names(expPF),
+                            unlist(expPF[expPF$"...1" %in% "donor", ]))
+expPF <- expPF %>%
+  rename(target = ...1.donor) %>%
+  filter(target != "donor") %>%
+  gather(cname, value, -target) %>%
+  mutate(Cytokine = gsub(pattern     = "([^\\.]+)\\..+",
+                         replacement = "\\1",
+                         cname),
+         donor    = gsub(pattern     = ".+\\.([^\\.]+)$",
+                         replacement = "\\1",
+                         cname),
+         Target   = gsub(pattern     = ".+ ([^ ]+)$",
+                         replacement = "\\1",
+                         target))
+unstimPF <- expPF %>%
+  filter(grepl(pattern = "NS", cname)) %>%
+  select(value, donor, Target) %>%
+  distinct() %>%
+  rename(Unstim = value)
+expPF <- merge(x = expPF, y = unstimPF, by = c("donor", "Target")) %>%
+  mutate(value    = as.numeric(value),
+         Unstim   = as.numeric(Unstim),
+         Fold     = value/Unstim,
+         CytoConc = Cytokine,
+         Conc     = gsub(pattern = ".+ ([^ ]+)$",
+                         replacement = "\\1",
+                         Cytokine),
+         Cytokine = gsub(pattern = "([^ ]+) .+",
+                         replacement = "\\1",
+                         Cytokine),
+         Cytokine = factor(Cytokine),
+         Cytokine = relevel(Cytokine, ref = "NS")) %>%
+  arrange(Cytokine, desc(Conc)) %>%
+  mutate(CytoConc = factor(CytoConc, levels = unique(CytoConc)))
+``` 
+
+```{r plot-jit-phospho}
+# make jitter plot
+plotJit <- ggplot(data    = expPF,
+                  mapping = aes(x = CytoConc, y = log2(Fold))) +
+  geom_boxplot(mapping = aes(fill = Cytokine), outlier.colour = NA) +
+  geom_dotplot(binaxis = "y", stackdir = "center", stackgroup = TRUE,
+               dotsize = 1) +
+  labs(x = "Concentration", y = "log2FC MFI") +
+  facet_wrap(facet = ~Target, nrow = 1, scale = "free") +
+  geom_hline(yintercept = 0) +
+  theme_bw() +
+  theme(panel.grid = element_blank(),
+        legend.position = "none",
+        axis.text.x = element_text(color = "black", angle = 45, size = 10, hjust = 1),
+        axis.text.y = element_text(color = "black", size = 10),
+        axis.title.y = element_text(color = "black", size = 10),
+        axis.title.x = element_blank())
+print(plotJit)
+
+# Wilcoxon-rank
+statDF <- expPF %>%
+  group_by(Target, CytoConc) %>%
+  do(p = wilcox.test(x = .$value, y = .$Unstim, paired = TRUE, correct = FALSE)$p.value) %>%
+  mutate(p = unlist(p))
+filter(statDF, p <= 0.1)
+``` 
+
+```{r cor-phospho-p24, include=FALSE}
+name2conc <- c("IFNa min" = "IFNa 002",
+               "IFNa max" = "IFNa 200",
+               "IFNb min" = "IFNb 0002",
+               "IFNb max" = "IFNb 20",
+               "IFNg min" = "IFNg 0005",
+               "IFNg max" = "IFNg 50")
+
+expMFIpF <- expPF %>%
+  mutate(CytoConc = name2conc[CytoConc]) %>%
+  filter(Target %in% "pIRF7" & !is.na(CytoConc)) %>%
+  select(CytoConc, Fold, donor) %>%
+  rename(pIRF7fc = Fold,
+         cname = CytoConc) %>%
+  merge(y = expMFI, by = c("donor", "cname"))
+expMFIpF %>%
+  group_by(CytokineName) %>%
+  do(rho = cor.test(formula = ~pIRF7fc+Fold, data = ., 
+                    method = "spearman")$estimate,
+     p= cor.test(formula = ~pIRF7fc+Fold, data = .,
+                 method = "spearman")$p.value) %>%
+  mutate(rho = unlist(rho), p = unlist(p))
+
+expMFIpF <- expPF %>%
+  mutate(CytoConc = name2conc[CytoConc]) %>%
+  filter(Target %in% "pSTAT1" & !is.na(CytoConc)) %>%
+  select(CytoConc, Fold, donor) %>%
+  rename(pSTAT1fc = Fold,
+         cname = CytoConc) %>%
+  merge(y = expMFI, by = c("donor", "cname"))
+
+expMFIpF %>%
+  group_by(CytokineName) %>%
+  do(rho = cor.test(formula = ~pSTAT1fc+Fold, data = ., 
+                    method = "spearman")$estimate,
+     p= cor.test(formula = ~pSTAT1fc+Fold, data = .,
+                 method = "spearman")$p.value) %>%
+  mutate(rho = unlist(rho), p = unlist(p))
+
+``` 
