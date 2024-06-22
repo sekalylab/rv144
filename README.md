@@ -30,7 +30,7 @@ code:
 - geneset-analysis: [[MD]](code/20160510_RV144pilot.geneset_analysis.code.md)  
 
 input:  
-- non-normalized matrix: [[CSV]](input/GA_illumina_expression.rv144pilot.matrix_non_norm.csv)  
+- non-normalized matrix: [[CSV]](see data release)
 - arrays/samples annotation: [[CSV]](input/GA_illumina_expression.rv144pilot.metadata.csv)  
 - features annotation: [[TSV]](input/Illumina_HumanHT12_V4.hg19.chip)  
   
@@ -50,7 +50,7 @@ code:
 - integrative analysis: [[MD]](code/20151020_RV144.integrative_analysis.code.md)  
 
 input:  
-- non-normalized matrix: [[CSV]](input/GA_illumina_expression.rv144.matrix_non_norm.csv)  
+- non-normalized matrix: [[CSV]](see data release)
 - arrays/samples annotation: [[CSV]](input/GA_illumina_expression.rv144.metadata.csv)  
 - features annotation: [[TSV]](input/Illumina_HumanHT12_V4.hg19.chip)  
 - antibody and cellular data: [[CSV]](input/rv144.primary_correlates_scaled_wk26.csv)  
@@ -67,7 +67,7 @@ output:
 - gsea result table: [[RDA]](output/rv144.gseaOutput.RData)  
 - slea ExpressionSet: [[RDA]](output/rv144.gsSet.RData)  
 - antibody and cellular ExpressionSet: [[RDA]](output/rv144.primCorrelatesSet.RData)  
-- flow cytometry ExpressionSet: raw [[RDA]](output/rv144.phenotypeRawSet.RData), normalized (output/rv144.phenotypeSet.RData)  
+- flow cytometry ExpressionSet: raw [[RDA]](output/rv144.phenotypeRawSet.RData), normalized [[RDA]](output/rv144.phenotypeSet.RData)  
 - luminex ExpressionSet: [[RDA]](output/rv144.luminexSet.RData)  
 - ics ExpressionSet: [[RDA]](output/rv144.icsSet.RData)  
 - haplotype ExpressionSet: [[RDA]](output/rv144.haplotypeSet.RData)  
